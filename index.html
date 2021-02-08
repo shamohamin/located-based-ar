@@ -19,12 +19,14 @@
 
         setInterval(() => {
           console.log("hello");
-          camera.setAttribute(
-            "gps-camera",
-            `simulateLatitude: ${long}; simulateLongitude: ${lat}`
-          );
-          long += 0.0004;
-          lat -= 0.0004;
+          if (camera) {
+            camera.setAttribute(
+              "gps-camera",
+              `simulateLatitude: ${long}; simulateLongitude: ${lat}`
+            );
+            long += 0.0004;
+            lat -= 0.0004;
+          }
         }, 1000);
       };
     </script>
@@ -37,14 +39,13 @@
       arjs="videoTexture: true; sourceType: webcam; debugUIEnabled: false; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960"
     >
       <a-camera
-        
-        
-        
-        
+        id="camera1"
+        near="0.1"
+        far="50000"
+        fov="80"
         rotation-reader
-        gps-camera="simulateLatitude: 51.049; simulateLongitude: -0.723"
         vertical-controls
-        
+        wasd-controls="acceleration: 1300"
       >
       </a-camera>
 
