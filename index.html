@@ -1,0 +1,138 @@
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>GeoAR.js demo</title>
+
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+
+
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+    <script>
+      window.onload = () => {
+        const camera = document.querySelector("a-camera");
+        let long = 51.049;
+        let lat = -0.723;
+
+        setInterval(() => {
+          console.log("hello");
+          if (camera) {
+            camera.setAttribute(
+              "gps-camera",
+              `simulateLatitude: ${long}; simulateLongitude: ${lat}`
+            );
+            long += 0.0004;
+            lat -= 0.0004;
+          }
+        }, 1000);
+      };
+    </script>
+  </head>
+
+  <body style="margin: 0; overflow: hidden">
+    <a-scene
+      vr-mode-ui="enabled: false"
+      renderer="antialias: true"
+      arjs="videoTexture: true; sourceType: webcam; debugUIEnabled: false; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960"
+    >
+      <a-camera
+        gps-projected-camera="simulateLatitude: 51.049; simulateLongitude: -0.723"
+        rotation-reader
+        position="0 20 0"
+        wasd-controls="acceleration: 1300"
+      >
+      </a-camera>
+
+      <a-box
+        gps-entity-place="latitude: 51.054; longitude: -0.723"
+        material="color: yellow"
+        position="0 90 0"
+        scale="100 100 100"
+      >
+      </a-box>
+    </a-scene>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>AR.JS Demo with Location Simulation and Altitude</title>
+    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+    <script src="https://raw.githack.com/cmcfadden/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <!-- <script>
+      THREEx.ArToolkitContext.baseURL =
+        "https://raw.githack.com/jeromeetienne/ar.js/master/three.js/";
+    </script> -->
+  </head>
+
+  <body style="margin: 0; overflow: hidden">
+    <a-scene
+      vr-mode-ui="enabled: false"
+      embedded
+      arjs="sourceType: webcam; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;"
+    >
+      <a-text
+        value="Weisman"
+        gps-entity-place="latitude: 44.97310; longitude: -93.23783;"
+        position="0 320 0"
+        rotation="0 0 0"
+        font="mozillavr"
+        color="#e43e31"
+        look-at="#camera"
+        side="double"
+        align="center"
+        width="400"
+      >
+      </a-text>
+
+      <a-text
+        value="Elliot Hall"
+        gps-entity-place="latitude: 44.97691; longitude: -93.23776;"
+        position="0 320 0"
+        rotation="0 0 0"
+        font="mozillavr"
+        color="#e43e31"
+        look-at="#camera"
+        side="double"
+        align="center"
+        width="400"
+      >
+      </a-text>
+
+      <a-text
+        value="Andersen Library"
+        gps-entity-place="latitude: 44.97322; longitude: -93.24298;"
+        position="0 420 0"
+        rotation="0 0 0"
+        font="mozillavr"
+        color="#e43e31"
+        look-at="#camera"
+        side="double"
+        align="center"
+        width="200"
+      >
+      </a-text>
+      <a-box
+        gps-entity-place="latitude: 51.054; longitude: -0.723"
+        material="color: yellow"
+        position="0 90 0"
+        scale="100 100 100"
+      >
+      </a-box>
+      <a-camera
+        id="camera"
+        gps-camera="simulateLatitude: 44.971958; simulateLongitude: -93.2422704; simulateAltitude: 300"
+        rotation-reader
+        far="900000"
+      >
+      </a-camera>
+    </a-scene>
+  </body>
+</html>
