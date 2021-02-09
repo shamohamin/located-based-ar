@@ -63,6 +63,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>AR.JS Demo with Location Simulation and Altitude</title>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
     <script src="https://raw.githack.com/cmcfadden/AR.js/master/aframe/build/aframe-ar.js"></script>
@@ -76,7 +77,7 @@
     <a-scene
       vr-mode-ui="enabled: false"
       embedded
-      arjs="sourceType: webcam; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;"
+      arjs="videoTexture: true; sourceType: webcam; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;"
     >
       <a-text
         value="Weisman"
@@ -108,7 +109,7 @@
 
       <a-text
         value="Andersen Library"
-        gps-entity-place="latitude: 44.97322; longitude: -93.24298;"
+        gps-entity-place="latitude: 44.973; longitude: -93.2422704;"
         position="0 420 0"
         rotation="0 0 0"
         font="mozillavr"
@@ -116,14 +117,14 @@
         look-at="#camera"
         side="double"
         align="center"
-        width="200"
+        width="400"
       >
       </a-text>
       <a-box
-        gps-entity-place="latitude: 51.054; longitude: -0.723"
+        gps-entity-place="latitude: 44.972004; longitude: -93.2422704"
         material="color: yellow"
-        position="0 90 0"
-        scale="100 100 100"
+        position="0 100 0"
+        scale="10 10 10"
       >
       </a-box>
       <a-camera
