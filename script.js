@@ -159,14 +159,16 @@ window.onload = () => {
   const cameraPos = document
     .querySelector("a-camera")
     .getAttribute("gps-camera");
-  // oring
-  
+  const parrentElement = document.querySelector("a-scene");
+  // origin
   const origin = {
     lang: cameraPos.simulateLongitude,
     lat: cameraPos.simulateLatitude,
   };
+
   console.log(origin);
-  makePoses(origin);
+  parrentElement.append()
+  makePoses(origin, parrentElement);
   // const aTexes = document.querySelectorAll("a-text");
 };
 
@@ -177,7 +179,7 @@ const Direction = {
   4: "downer lat and lang",
 };
 
-function makePoses(origin) {
+function makePoses(origin, parrentElement) {
   let count = 0;
 
   for (let i = 0; i < 1 && count < 20; count++, i += 0.0004) {
@@ -213,10 +215,11 @@ function makePoses(origin) {
         "title",
         `lat:${point.lat}; \n long: ${point.lang} \n dir=${Direction[j]}`
       );
-      placeText.setAttribute("scale", "10 10 10");
+      placeText.setAttribute("scale", "1 1 1");
       placeText.addEventListener("loaded", () => {
         window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"));
       });
+      parrentElement.appendChild(placeText)
       j++;
     }
   }
