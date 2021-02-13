@@ -159,20 +159,68 @@ window.onload = () => {
   const cameraPos = document
     .querySelector("a-camera")
     .getAttribute("gps-camera");
-  const aTexes = document.querySelectorAll("a-text");
-  // console.log()
-  for (let text of aTexes) {
-    const cord = text.getAttribute("gps-entity-place");
-    console.log("cord is:", cord)
-    const dis = calculateDistance(
-      cameraPos.latitude,
-      cameraPos.longitude,
-      cord.latitude,
-      cord.longitude
-    );
-    console.log(dis)
-  }
+  // oring
+  
+  const origin = {
+    lang: cameraPos.simulateLongitude,
+    lat: cameraPos.simulateLatitude,
+  };
+  console.log(origin);
+  makePoses(origin);
+  // const aTexes = document.querySelectorAll("a-text");
 };
+
+const Direction = {
+  1: "upper lang",
+  2: "upper lat",
+  3: "upper lat and lang",
+  4: "downer lat and lang",
+};
+
+function makePoses(origin) {
+  let count = 0;
+
+  for (let i = 0; i < 1 && count < 20; count++, i += 0.0004) {
+    const points = [
+      {
+        lang: origin.lang + i,
+        lat: origin.lat,
+      },
+      {
+        lang: origin.lang,
+        lat: origin.lat + i,
+      },
+      {
+        lang: origin.lang + i,
+        lat: origin.lat + i,
+      },
+      {
+        lang: origin.lang - i,
+        lat: origin.lat - i,
+      },
+    ];
+    let j = 1;
+    // let finish = false;
+
+    for (let point of points) {
+      const placeText = document.createElement("a-link");
+      placeText.setAttribute(
+        "gps-entity-place",
+        `latitude: ${point.lat}; longitude: ${point.lang};`
+      );
+      console.log(`latitude: ${point.lat}; longitude: ${point.lang};`);
+      placeText.setAttribute(
+        "title",
+        `lat:${point.lat}; \n long: ${point.lang} \n dir=${Direction[j]}`
+      );
+      placeText.setAttribute("scale", "10 10 10");
+      placeText.addEventListener("loaded", () => {
+        window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"));
+      });
+      j++;
+    }
+  }
+}
 
 function calculateDistance(lat1, long1, lat2, long2) {
   //radians
