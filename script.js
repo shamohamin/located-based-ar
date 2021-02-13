@@ -166,23 +166,51 @@ window.onload = () => {
     lat: cameraPos.simulateLatitude,
   };
 
-  console.log(origin);
-  parrentElement.append()
+  // console.log(origin);
+  parrentElement.append();
   makePoses(origin, parrentElement);
   // const aTexes = document.querySelectorAll("a-text");
 };
 
 const Direction = {
-  1: "upper lang",
-  2: "upper lat",
-  3: "upper lat and lang",
-  4: "downer lat and lang",
+  1: {
+    name: "upper lang",
+    color: "blue",
+  },
+  2: {
+    name: "upper lat",
+    color: "red",
+  },
+  3: {
+    name: "upper lat and lang",
+    color: "black",
+  },
+  4: {
+    name: "downer lat and lang",
+    color: "gray",
+  },
+  5: {
+    name: "downer long",
+    color: "green",
+  },
+  6: {
+    name: "downer lat",
+    color: "#4A4238",
+  },
+  7: {
+    name: "upper lang downer lat",
+    color: "brown",
+  },
+  8: {
+    name: "downer long upper lat",
+    color: "orange",
+  },
 };
 
 function makePoses(origin, parrentElement) {
   let count = 0;
 
-  for (let i = 0; i < 1 && count < 20; count++, i += 0.0004) {
+  for (let i = 0; i < 1 && count < 20; count++, i += 0.0008) {
     const points = [
       {
         lang: origin.lang + i,
@@ -200,26 +228,47 @@ function makePoses(origin, parrentElement) {
         lang: origin.lang - i,
         lat: origin.lat - i,
       },
+      {
+        lang: origin.lang - i,
+        lat: origin.lat,
+      },
+      {
+        lang: origin.lang,
+        lat: origin.lat - i,
+      },
+      {
+        lang: origin.lang + i,
+        lat: origin.lat - i,
+      },
+      {
+        lang: origin.lang - i,
+        lat: origin.lat + i,
+      },
     ];
     let j = 1;
     // let finish = false;
 
     for (let point of points) {
-      const placeText = document.createElement("a-link");
+      const placeText = document.createElement("a-text");
       placeText.setAttribute(
         "gps-entity-place",
         `latitude: ${point.lat}; longitude: ${point.lang};`
       );
-      console.log(`latitude: ${point.lat}; longitude: ${point.lang};`);
+      // console.log(`latitude: ${point.lat}; longitude: ${point.lang};`);
       placeText.setAttribute(
-        "title",
-        `lat:${point.lat}; \n long: ${point.lang} \n dir=${Direction[j]}`
+        "value",
+        `lat:${point.lat}; \n long: ${point.lang} \n dir=${Direction[j].name}`
+      );
+      console.log(
+        `lat:${point.lat}; \n long: ${point.lang} \n dir=${Direction[j].name}`
       );
       placeText.setAttribute("scale", "1 1 1");
+      placeText.setAttribute("position", "0 0 0");
+      placeText.setAttribute("material", `color:${Direction[j].color}`);
       placeText.addEventListener("loaded", () => {
         window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"));
       });
-      parrentElement.appendChild(placeText)
+      parrentElement.appendChild(placeText);
       j++;
     }
   }
