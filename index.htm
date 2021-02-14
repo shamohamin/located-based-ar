@@ -1,0 +1,238 @@
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>GeoAR.js demo</title>
+
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+
+
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+    <script>
+      window.onload = () => {
+        const camera = document.querySelector("a-camera");
+        let long = 51.049;
+        let lat = -0.723;
+
+        setInterval(() => {
+          console.log("hello");
+          if (camera) {
+            camera.setAttribute(
+              "gps-camera",
+              `simulateLatitude: ${long}; simulateLongitude: ${lat}`
+            );
+            long += 0.0004;
+            lat -= 0.0004;
+          }
+        }, 1000);
+      };
+    </script>
+  </head>
+
+  <body style="margin: 0; overflow: hidden">
+    <a-scene
+      vr-mode-ui="enabled: false"
+      renderer="antialias: true"
+      arjs="videoTexture: true; sourceType: webcam; debugUIEnabled: false; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960"
+    >
+      <a-camera
+        gps-projected-camera="simulateLatitude: 51.049; simulateLongitude: -0.723"
+        rotation-reader
+        position="0 20 0"
+        wasd-controls="acceleration: 1300"
+      >
+      </a-camera>
+
+      <a-box
+        gps-entity-place="latitude: 51.054; longitude: -0.723"
+        material="color: yellow"
+        position="0 90 0"
+        scale="100 100 100"
+      >
+      </a-box>
+    </a-scene>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>AR.JS Demo with Location Simulation and Altitude</title>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+    <script src="https://raw.githack.com/cmcfadden/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <!-- <script async src="script.js"></script> -->
+
+    <script>
+      var pointsHolder = [];
+
+      window.onload = () => {
+        const cameraPos = document
+          .querySelector("a-camera")
+          .getAttribute("gps-camera");
+        const parrentElement = document.querySelector("a-scene");
+        // origin
+        const origin = {
+          lang: cameraPos.simulateLongitude,
+          lat: cameraPos.simulateLatitude,
+        };
+
+        makePosesWithDistanceAndDegrees(origin, parrentElement);
+      };
+
+      function makePosesWithDistanceAndDegrees(originPoint, parrentElement) {
+        // 2 meters
+        const degree = 1.0;
+        console.log(
+          document.querySelector("a-camera").getAttribute("position")
+        );
+        for (let i = 2; i <= 20; i += 2) {
+          const [lat, long] = calculateTheSecondPoint(
+            originPoint.lat,
+            originPoint.lang,
+            i,
+            degree
+          );
+          AddPoints(
+            document.createElement("a-box"),
+            lat,
+            long,
+            i == 0 ? "blue" : "green",
+            parrentElement,
+            i
+          );
+        }
+        // AddText(parrentElement);
+      }
+
+      function AddText(parrentElement, point, count) {
+        const text = document.createElement("a-entity");
+
+        text.setAttribute(
+          "gps-entity-place",
+          `latitude: ${point.lat};
+             longitude: ${point.long};`
+        );
+
+        text.setAttribute("scale", "0.5 0.5 0.5");
+        text.setAttribute("material", "color: black");
+        text.setAttribute("position", {
+          x: -1,
+          y: -2 + point.distance / 50,
+          z: 0,
+        });
+        text.setAttribute(
+          "text",
+          `width: 4; value: point number: ${count} \n distance: ${point.distance}`
+        );
+        text.addEventListener("loaded", () => {
+          window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"));
+        });
+        parrentElement.appendChild(text);
+      }
+
+      function AddPoints(placeObj, lat, long, color, parrentElement, distance) {
+        pointsHolder.push({
+          placeObj: placeObj,
+          lang: long.toFixed(10),
+          lat: lat.toFixed(10),
+          distance: distance,
+        });
+        placeObj.setAttribute(
+          "gps-entity-place",
+          `latitude: ${lat.toFixed(10)}; longitude: ${long.toFixed(10)};`
+        );
+        AddText(
+          parrentElement,
+          {
+            placeObj: placeObj,
+            lang: long.toFixed(10),
+            lat: lat.toFixed(10),
+            distance: distance,
+          },
+          pointsHolder.length
+        );
+        // console.log(`latitude: ${point.lat}; longitude: ${point.lang};`);
+        placeObj.setAttribute(
+          "value",
+          `lat:${lat.toFixed(10)}; \n long: ${long.toFixed(10)}`
+        );
+        // console.log(`lat:${lat}; \n long: ${long}`);
+        let scale, position;
+        if (distance <= 20) {
+          scale = "0.2 0.2 0.2";
+          position = {
+            x: 0,
+            y: -3 + distance / 50,
+            x: 0,
+          };
+        } else if (distance <= 30) {
+          scale = "1 1 1";
+          position = {
+            x: 0,
+            y: +1,
+            z: 0,
+          };
+        } else {
+          scale = "10 10 10";
+          position = {
+            x: 0,
+            y: -2,
+            z: 0,
+          };
+        }
+
+        placeObj.setAttribute("scale", scale);
+        placeObj.setAttribute("position", { ...position });
+
+        placeObj.setAttribute("material", `color:${color}`);
+        placeObj.addEventListener("loaded", () => {
+          window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"));
+        });
+        parrentElement.appendChild(placeObj);
+      }
+
+      function calculateTheSecondPoint(latitude, longitude, distance, bearing) {
+        // taken from: https://stackoverflow.com/a/46410871/13549
+        // distance in M, bearing in degrees
+
+        const R = 6378.1 * 1000; // Radius of the Earth
+        const brng = (bearing * Math.PI) / 180; // Convert bearing to radian
+        let lat = (latitude * Math.PI) / 180; // Current coords to radians
+        let lon = (longitude * Math.PI) / 180;
+
+        // Do the math magic
+        lat = Math.asin(
+          Math.sin(lat) * Math.cos(distance / R) +
+            Math.cos(lat) * Math.sin(distance / R) * Math.cos(brng)
+        );
+        lon += Math.atan2(
+          Math.sin(brng) * Math.sin(distance / R) * Math.cos(lat),
+          Math.cos(distance / R) - Math.sin(lat) * Math.sin(lat)
+        );
+
+        // Coords back to degrees and return
+        return [(lat * 180) / Math.PI, (lon * 180) / Math.PI];
+      }
+    </script>
+  </head>
+
+  <body style="margin: 0; overflow: hidden">
+    <a-scene
+      vr-mode-ui="enabled: false"
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false; videoTexture:true"
+    >
+      <a-camera
+        gps-camera="simulateLatitude: 51.049; simulateLongitude: -0.723"
+        rotation-reader
+      ></a-camera>
+    </a-scene>
+  </body>
+</html>

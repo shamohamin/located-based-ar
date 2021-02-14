@@ -167,8 +167,9 @@ window.onload = () => {
   };
 
   // console.log(origin);
-  parrentElement.append();
-  makePoses(origin, parrentElement);
+  // parrentElement.append();
+  makePosesWithDistanceAndDegrees(origin, parrentElement)
+  // makePoses(origin, parrentElement);
   // const aTexes = document.querySelectorAll("a-text");
 };
 
@@ -206,6 +207,44 @@ const Direction = {
     color: "orange",
   },
 };
+
+function makePosesWithDistanceAndDegrees(originPoint, parrentElement) {
+  // 2 meters
+  const distance = 2.0;
+  for (let i = 0; i <= 360; i += 30) {
+    const [lat, long] = calculateTheSecondPoint(
+      originPoint.lat,
+      originPoint.lang,
+      distance,
+      i
+    );
+    AddPoints(lat, long, "blue", parrentElement);
+  }
+}
+
+function AddPoints(lat, long, color, parrentElement) {
+  const placeText = document.createElement("a-box");
+  placeText.setAttribute(
+    "gps-entity-place",
+    `latitude: ${lat}; longitude: ${long};`
+  );
+  // console.log(`latitude: ${point.lat}; longitude: ${point.lang};`);
+  placeText.setAttribute("value", `lat:${lat}; \n long: ${long} \n`);
+  console.log(
+    `lat:${point.lat}; \n long: ${point.lang} \n dir=${Direction[j].name}`
+  );
+  placeText.setAttribute("scale", "10 10 10");
+  placeText.setAttribute("position", {
+    x: 0,
+    y: 0,
+    y: 0,
+  });
+  placeText.setAttribute("material", `color:${color}`);
+  placeText.addEventListener("loaded", () => {
+    window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"));
+  });
+  parrentElement.appendChild(placeText);
+}
 
 function makePoses(origin, parrentElement) {
   let count = 0;
@@ -249,7 +288,7 @@ function makePoses(origin, parrentElement) {
     // let finish = false;
 
     for (let point of points) {
-      const placeText = document.createElement("a-text");
+      const placeText = document.createElement("a-box");
       placeText.setAttribute(
         "gps-entity-place",
         `latitude: ${point.lat}; longitude: ${point.lang};`
@@ -262,8 +301,12 @@ function makePoses(origin, parrentElement) {
       console.log(
         `lat:${point.lat}; \n long: ${point.lang} \n dir=${Direction[j].name}`
       );
-      placeText.setAttribute("scale", "1 1 1");
-      placeText.setAttribute("position", "0 0 0");
+      placeText.setAttribute("scale", "10 10 10");
+      placeText.setAttribute("position", {
+        x: 0,
+        y: 0,
+        y: 0,
+      });
       placeText.setAttribute("material", `color:${Direction[j].color}`);
       placeText.addEventListener("loaded", () => {
         window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"));
@@ -300,4 +343,27 @@ function calculateDistance(lat1, long1, lat2, long2) {
   z -= beta * (1 - e) * Math.sin(lat2);
 
   return Math.sqrt(x * x + y * y + z * z) / 1000;
+}
+
+function calculateTheSecondPoint(latitude, longitude, distance, bearing) {
+  // taken from: https://stackoverflow.com/a/46410871/13549
+  // distance in KM, bearing in degrees
+
+  const R = 6378.1 * 1000; // Radius of the Earth
+  const brng = (bearing * Math.PI) / 180; // Convert bearing to radian
+  let lat = (latitude * Math.PI) / 180; // Current coords to radians
+  let lon = (longitude * Math.PI) / 180;
+
+  // Do the math magic
+  lat = Math.asin(
+    Math.sin(lat) * Math.cos(distance / R) +
+      Math.cos(lat) * Math.sin(distance / R) * Math.cos(brng)
+  );
+  lon += Math.atan2(
+    Math.sin(brng) * Math.sin(distance / R) * Math.cos(lat),
+    Math.cos(distance / R) - Math.sin(lat) * Math.sin(lat)
+  );
+
+  // Coords back to degrees and return
+  return [(lat * 180) / Math.PI, (lon * 180) / Math.PI];
 }
