@@ -168,7 +168,7 @@ window.onload = () => {
 
   // console.log(origin);
   // parrentElement.append();
-  makePosesWithDistanceAndDegrees(origin, parrentElement)
+  makePosesWithDistanceAndDegrees(origin, parrentElement);
   // makePoses(origin, parrentElement);
   // const aTexes = document.querySelectorAll("a-text");
 };
@@ -366,4 +366,9 @@ function calculateTheSecondPoint(latitude, longitude, distance, bearing) {
 
   // Coords back to degrees and return
   return [(lat * 180) / Math.PI, (lon * 180) / Math.PI];
+}
+
+function showingPositionOfPerson() {
+  const div = document.createElement("div");
+  div.classList.add("position");
 }

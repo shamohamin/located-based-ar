@@ -84,6 +84,7 @@
         };
 
         makePosesWithDistanceAndDegrees(origin, parrentElement);
+        showingPositionOfPerson(parrentElement);
       };
 
       function makePosesWithDistanceAndDegrees(originPoint, parrentElement) {
@@ -108,56 +109,51 @@
             i
           );
         }
-        // AddText(parrentElement);
+        AddText(parrentElement);
       }
 
-      function AddText(parrentElement, point, count) {
-        const text = document.createElement("a-entity");
+      function AddText(parrentElement) {
+        for (let i = 0; i < pointsHolder.length; i++) {
+          const point = pointsHolder[i];
+          const text = document.createElement("a-entity");
 
-        text.setAttribute(
-          "gps-entity-place",
-          `latitude: ${point.lat};
+          text.setAttribute(
+            "gps-entity-place",
+            `latitude: ${point.lat};
              longitude: ${point.long};`
-        );
+          );
 
-        text.setAttribute("scale", "0.5 0.5 0.5");
-        text.setAttribute("material", "color: black");
-        text.setAttribute("position", {
-          x: -1,
-          y: -2 + point.distance / 50,
-          z: 0,
-        });
-        text.setAttribute(
-          "text",
-          `width: 4; value: point number: ${count} \n distance: ${point.distance}`
-        );
-        text.addEventListener("loaded", () => {
-          window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"));
-        });
-        parrentElement.appendChild(text);
+          text.setAttribute("scale", "0.5 0.5 0.5");
+          text.setAttribute("material", "color: black");
+          text.setAttribute("position", {
+            x: 0,
+            y: -2 + point.distance / 50,
+            z: 0,
+          });
+          text.setAttribute(
+            "text",
+            `width: 4; value: point number: ${i} \n distance: ${point.distance}`
+          );
+          text.addEventListener("loaded", () => {
+            window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"));
+          });
+          parrentElement.appendChild(text);
+        }
       }
 
       function AddPoints(placeObj, lat, long, color, parrentElement, distance) {
         pointsHolder.push({
           placeObj: placeObj,
-          lang: long.toFixed(10),
+          long: long.toFixed(10),
           lat: lat.toFixed(10),
           distance: distance,
         });
+
         placeObj.setAttribute(
           "gps-entity-place",
           `latitude: ${lat.toFixed(10)}; longitude: ${long.toFixed(10)};`
         );
-        AddText(
-          parrentElement,
-          {
-            placeObj: placeObj,
-            lang: long.toFixed(10),
-            lat: lat.toFixed(10),
-            distance: distance,
-          },
-          pointsHolder.length
-        );
+
         // console.log(`latitude: ${point.lat}; longitude: ${point.lang};`);
         placeObj.setAttribute(
           "value",
@@ -220,10 +216,40 @@
         // Coords back to degrees and return
         return [(lat * 180) / Math.PI, (lon * 180) / Math.PI];
       }
+
+      function showingPositionOfPerson(parrentElement) {
+        const div = document.createElement("div");
+        div.classList.add("position");
+        // parrentElement.appendChild(div);
+      }
     </script>
+    <style>
+      .position {
+        height: 200px;
+        justify-content: center;
+        position: fixed;
+        bottom: 0%;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        margin: 0px auto;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+
+        background-color: rgb(21, 32, 43);
+
+        -ms-border-radius: 50% 50% 0 0;
+        -webkit-border-radius: 50% 50% 0 0;
+        -moz-border-radius: 50% 50% 0 0;
+        -o-border-radius: 50% 50% 0 0;
+        border-radius: 50% 50% 0 0;
+      }
+    </style>
   </head>
 
   <body style="margin: 0; overflow: hidden">
+    <div class="position">Amin Sedighi</div>
     <a-scene
       vr-mode-ui="enabled: false"
       embedded
